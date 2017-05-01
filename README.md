@@ -33,20 +33,6 @@ At this point the browser will prompt you for a `tdm` login and password you def
 
     docker-compose up -d tdm
 
-## Capturing TDM Log Files Outside the Container
-
-Until `5.0`, the TDM lacks configurability with respect to the location of log files and the TDM simply logs locally to where the TDM is invoked. In the meantime, to capture TDM log files outside the container, do the usual volume mounting outside the container:
-
-    /path/to/your/tdm/logs:/usr/local/tomcat/content/tdm/
-
-*and* put the `tdm.jar` and `tdm.sh` run script in `/path/to/your/tdm/logs`.
-
-For example, you can get the `tdm.jar`:
-
-    curl -SL  https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/edu/ucar/tdmFat/4.6.10/tdmFat-4.6.10.jar -o tdm.jar
-
-The `tdm.sh` script can be found within this repository. Make sure the `tdm.sh` script is executable by the container.
-
 ## Citation
 
 In order to cite this project, please simply make use of the [Unidata THREDDS Data Server DOI](https://data.datacite.org/10.5065/D6N014KG).
