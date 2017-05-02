@@ -1,6 +1,6 @@
 # TDM Docker
 
-A containerized [TDM](http://www.unidata.ucar.edu/software/thredds/current/tds/reference/collections/TDM.html)
+A containerized [TDM](http://www.unidata.ucar.edu/software/thredds/current/tds/reference/collections/TDM.html). This container is meant to work in close conjunction with the [TDS Docker container](https://github.com/Unidata/thredds-docker) which has additional information for running the TDS and TDM containers in coordinated fashion.
 
 ## Versions
 
