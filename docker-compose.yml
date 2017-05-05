@@ -11,8 +11,5 @@ tdm:
     # TDM logging non-configurable until 5.0 so you'll need tdm.sh and
     # tdm.jar if you want to log outside the container :-(
     - /path/to/your/tdm/logs:/usr/local/tomcat/content/tdm/
-  environment:
-    # change the password
-    - TDM_PW=CHANGEME!
-    # that trailing slash is important
-    - TDS_HOST=http://thredds.yourhost.net/
+    env_file:
+      - "compose.env"

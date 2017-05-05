@@ -13,6 +13,8 @@ To run the TDM Docker container, beyond a basic Docker setup, we recommend insta
 
 In the `docker-compose.yml` file, `volumes` mapping section, you will point the TDM to the [TDS content root directory](https://github.com/Unidata/thredds-docker#thredds) (e.g., `~/tdsconfig/`) and the data directory corresponding to the `DataRoots` element in `threddsConfig.xml`.
 
+Because you will most likely run this container alongside the `thredds-docker` container, see the `thredds-docker` project [README](https://github.com/Unidata/thredds-docker) for additional parameterization via the `compose.env` file.
+
 The TDM will notify the TDS of data changes via an HTTPS port `8443` triggering mechanism. It is important the TDM password (`TDM_PW` environment variable) defined in the [docker-compose.yml](https://github.com/Unidata/thredds-docker/blob/master/docker-compose.yml) file corresponds to the SHA **digested** password in the [tomcat-users.xml](https://github.com/Unidata/thredds-docker/blob/master/files/tomcat-users.xml) file. [See the parent container](https://hub.docker.com/r/unidata/tomcat-docker/) for how to create a SHA digested password. Also, because this mechanism works via port `8443`, you will have to get your HTTPS certificates in place. Again [see the parent container](https://hub.docker.com/r/unidata/tomcat-docker/) on how to install certificates, self-signed or otherwise.
 
 Not having the Tomcat `tdm` user password and digested password in sync can be a big source of frustration. One way to diagnose this problem is to look at the TDM logs and `grep` for `trigger`. You will find something like:
