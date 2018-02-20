@@ -54,14 +54,14 @@ ENV PATH $HOME:$PATH
 
 WORKDIR $HOME
 
-ENV TDM_VERSION 4.6.10
+ENV TDM_VERSION 4.6.11
 
 ###
 # Grab the TDM
 ###
 
 RUN curl -SL \
-    https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/edu/ucar/tdmFat/${TDM_VERSION}/tdmFat-${TDM_VERSION}.jar \
+    https://artifacts.unidata.ucar.edu/repository/unidata-releases/edu/ucar/tdmFat/${TDM_VERSION}/tdmFat-${TDM_VERSION}.jar \
     -o tdm.jar
 
 ###

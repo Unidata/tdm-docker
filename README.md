@@ -4,6 +4,7 @@ A containerized [TDM](http://www.unidata.ucar.edu/software/thredds/current/tds/r
 
 ## Versions
 
+* `unidata/tdm-docker:latest`
 * `unidata/tdm-docker:4.6`
 * `unidata/tdm-docker:5.0-SNAPSHOT`
 
@@ -54,7 +55,7 @@ Until `5.0`, the TDM lacks configurability with respect to the location of log f
 
 For example, you can get the `tdm.jar`:
 
-    curl -SL  https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/edu/ucar/tdmFat/4.6.10/tdmFat-4.6.10.jar -o tdm.jar
+    curl -SL  https://artifacts.unidata.ucar.edu/repository/unidata-releases/edu/ucar/tdmFat/4.6.11/tdmFat-4.6.11.jar
 
 The `tdm.sh` script can be found within this repository. Make sure the `tdm.sh` script is executable by the container.
 
