@@ -13,11 +13,25 @@ RUN apt-get update
 RUN apt-get install -y curl
 
 ###
-# Create the user and group tomcat and change ownership of the tomcat directory
-# to user and group tomcat. Note that we are not running a Java web application
-# or Tomcat. We are simply creating a non-root user, and tomcat is a convenient
-# choice especially when working with the TDS and its Tomcat web application
-# directory structure.
+# gosu is a non-optimal way to deal with the mismatches between Unix user and
+# group IDs inside versus outside the container resulting in permission
+# headaches when writing to directory outside the container.
+###
+
+ENV GOSU_VERSION 1.10
+
+ENV GOSU_URL https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64
+
+RUN gpg --keyserver pgp.mit.edu --recv-keys \
+	B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+	&& curl -sSL $GOSU_URL -o /bin/gosu \
+	&& chmod +x /bin/gosu \
+	&& curl -sSL $GOSU_URL.asc -o /tmp/gosu.asc \
+	&& gpg --verify /tmp/gosu.asc /bin/gosu \
+	&& rm /tmp/gosu.asc
+
+###
+# CATALINA_HOME
 ###
 
 ENV CATALINA_HOME /usr/local/tomcat
@@ -26,15 +40,19 @@ ENV TDM_HOME ${CATALINA_HOME}/content/tdm
 
 RUN mkdir -p $TDM_HOME
 
-RUN groupadd -r tomcat && \
-	useradd -g tomcat -d ${CATALINA_HOME} -s /sbin/nologin \
-  -c "Tomcat user" tomcat
+ENV HOME $TDM_HOME
+
+##
+# Set the path
+##
+
+ENV PATH $HOME:$PATH
 
 ###
 # Create content/tdm directory
 ###
 
-WORKDIR $TDM_HOME
+WORKDIR $HOME
 
 ENV TDM_VERSION 5.0.0
 ENV TDM_SNAPSHOT_VERSION ${TDM_VERSION}-20170608.124350-197
@@ -44,31 +62,19 @@ ENV TDM_SNAPSHOT_VERSION ${TDM_VERSION}-20170608.124350-197
 ###
 
 RUN curl -SL \
-    https://artifacts.unidata.ucar.edu/content/repositories/unidata-snapshots/edu/ucar/tdmFat/${TDM_VERSION}-SNAPSHOT/tdmFat-${TDM_SNAPSHOT_VERSION}.jar \
+   https://artifacts.unidata.ucar.edu/repository/unidata-snapshots/edu/ucar/tdmFat/${TDM_VERSION}-SNAPSHOT/${TDM_SNAPSHOT_VERSION}.jar \
     -o tdm.jar
 
 ###
 # Copy the TDM executable inside the container
 ###
 
-COPY tdm.sh $TDM_HOME
-
-RUN chmod +x tdm.sh
-
-###
-# Change owner of tomcat directory to user and group tomcat
-###
-
-RUN chown -R tomcat:tomcat $CATALINA_HOME
+COPY tdm.sh $HOME
+COPY entrypoint.sh /
 
 ###
-# Switch to user tomcat
+# Start container
 ###
+ENTRYPOINT ["/entrypoint.sh"]
 
-USER tomcat
-
-###
-# TDS Command
-###
-
-CMD $TDM_HOME/tdm.sh
+CMD ["tdm.sh"]
