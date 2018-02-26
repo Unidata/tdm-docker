@@ -6,7 +6,7 @@ version: '3'
 
 services:
   tdm:
-    image: unidata/tdm-docker:4.6
+    image: unidata/tdm-docker:4.6.11
     container_name: tdm
     volumes:
       - /path/to/your/thredds/directory:/usr/local/tomcat/content/thredds

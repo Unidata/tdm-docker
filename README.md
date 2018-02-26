@@ -5,7 +5,7 @@ A containerized [TDM](http://www.unidata.ucar.edu/software/thredds/current/tds/r
 ## Versions
 
 * `unidata/tdm-docker:latest`
-* `unidata/tdm-docker:4.6`
+* `unidata/tdm-docker:4.6.11`
 * `unidata/tdm-docker:5.0-SNAPSHOT`
 
 ## Configuration
