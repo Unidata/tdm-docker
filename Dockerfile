@@ -38,7 +38,7 @@ ENV CATALINA_HOME /usr/local/tomcat
 
 ENV TDM_HOME ${CATALINA_HOME}/content/tdm
 
-RUN mkdir -p $TDM_HOME
+RUN mkdir -p $TDM_HOME/logs
 
 ENV HOME $TDM_HOME
 
@@ -55,14 +55,14 @@ ENV PATH $HOME:$PATH
 WORKDIR $HOME
 
 ENV TDM_VERSION 5.0.0
-ENV TDM_SNAPSHOT_VERSION ${TDM_VERSION}-20170608.124350-197
+ENV TDM_SNAPSHOT_VERSION ${TDM_VERSION}-20180307.131703-247
 
 ###
 # Grab the TDM
 ###
 
 RUN curl -SL \
-   https://artifacts.unidata.ucar.edu/repository/unidata-snapshots/edu/ucar/tdmFat/${TDM_VERSION}-SNAPSHOT/${TDM_SNAPSHOT_VERSION}.jar \
+    https://artifacts.unidata.ucar.edu/repository/unidata-snapshots/edu/ucar/tdmFat/${TDM_VERSION}-SNAPSHOT/tdmFat-${TDM_SNAPSHOT_VERSION}.jar \
     -o tdm.jar
 
 ###
@@ -70,6 +70,7 @@ RUN curl -SL \
 ###
 
 COPY tdm.sh $HOME
+COPY log4j2.xml $HOME
 COPY entrypoint.sh /
 
 ###
