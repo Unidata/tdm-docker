@@ -15,7 +15,7 @@ To run the TDM Docker container, beyond a basic Docker setup, we recommend insta
 
 In the `docker-compose.yml` file, `volumes` mapping section, you will point the TDM to the [TDS content root directory](https://github.com/Unidata/thredds-docker#thredds) (e.g., `~/tdsconfig/`) and the data directory corresponding to the `DataRoots` element in `threddsConfig.xml`.
 
-Because you will most likely run this container alongside the `thredds-docker` container, see the `thredds-docker` project [README](https://github.com/Unidata/thredds-docker) for additional parameterization via the `compose.env` file.
+Because you will most likely run this container alongside the `thredds-docker` container, see the `thredds-docker` project [README](https://github.com/Unidata/thredds-docker) for additional parameterization via the `compose.env` file. Pay special attention to the `TDS_HOST` environment variable which will tell the TDM where the TDS lives so that it can communicate with it. See the section below on [coordinating with the TDS](#tdm-password-and-coordination-with-the-tds).
 
 ### Configurable TDM UID and GID
 
