@@ -30,13 +30,13 @@ The TDM will notify the TDS of data changes via an HTTPS port `8443` triggering 
 Not having the Tomcat `tdm` user password and digested password in sync can be a big source of frustration. One way to diagnose this problem is to look at the TDM logs and `grep` for `trigger`. You will find something like:
 
 ```sh
-fc.NAM-CONUS_80km.log:2016-11-02T16:09:54.305 +0000 WARN  - FAIL send trigger to http://thredds-jetstream.unidata.ucar.edu/thredds/admin/collection/trigger?trigger=never&collection=NAM-CONUS_80km status = 401
+fc.NAM-CONUS_80km.log:2016-11-02T16:09:54.305 +0000 WARN  - FAIL send trigger to https://tds.scigw.unidata.ucar.edu/thredds/admin/collection/trigger?trigger=never&collection=NAM-CONUS_80km status = 401
 ```
 
 Enter the trigger URL in your browser:
 
 ```sh
-http://thredds-jetstream.unidata.ucar.edu/thredds/admin/collection/trigger?trigger=never&collection=NAM-CONUS_80km
+https://tds.scigw.unidata.ucar.edu/thredds/admin/collection/trigger?trigger=never&collection=NAM-CONUS_80km
 ```
 
 At this point the browser will prompt you for a `tdm` login and password you defined in the `docker-compose.yml`. If the triggering mechanism is successful, you see a `TRIGGER SENT` message. Otherwise, make sure your HTTPS certificate is present, and ensure the `tdm` password in the `docker-compose.yml`, and digested password in the `tomcat-users.xml` are in sync.
