@@ -92,14 +92,14 @@ ENV PATH $HOME:$PATH
 WORKDIR $HOME
 
 ENV TDM_VERSION 5.0.0
-ENV TDM_SNAPSHOT_VERSION ${TDM_VERSION}-20210526.171628-38
+ENV TDM_BETA_VERSION ${TDM_VERSION}-beta9
 
 ###
 # Grab the TDM
 ###
 
 RUN curl -SL \
-    https://artifacts.unidata.ucar.edu/repository/unidata-snapshots/edu/ucar/tdmFat/${TDM_VERSION}-SNAPSHOT/tdmFat-${TDM_SNAPSHOT_VERSION}.jar \
+    https://downloads.unidata.ucar.edu/tds/${TDM_VERSION}/tdm-{$TDM_BETA_VERSION}.jar \
     -o tdm.jar
 
 ###
