@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk:8
 
 MAINTAINER Unidata Cloud Team
 
@@ -91,7 +91,7 @@ ENV PATH $HOME:$PATH
 
 WORKDIR $HOME
 
-ENV TDM_VERSION 4.6.11
+ENV TDM_VERSION 4.6.17
 
 ###
 # Grab the TDM
