@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk:11-jdk-buster
 
 MAINTAINER Unidata Cloud Team
 
@@ -75,7 +75,7 @@ ENV CATALINA_HOME /usr/local/tomcat
 
 ENV TDM_HOME ${CATALINA_HOME}/content/tdm
 
-RUN mkdir -p $TDM_HOME
+RUN mkdir -p $TDM_HOME/logs
 
 ENV HOME $TDM_HOME
 
@@ -91,14 +91,12 @@ ENV PATH $HOME:$PATH
 
 WORKDIR $HOME
 
-ENV TDM_VERSION 4.6.11
-
 ###
 # Grab the TDM
 ###
 
 RUN curl -SL \
-    https://artifacts.unidata.ucar.edu/repository/unidata-releases/edu/ucar/tdmFat/${TDM_VERSION}/tdmFat-${TDM_VERSION}.jar \
+    https://downloads.unidata.ucar.edu/tds/5.0/tdm-5.0.jar \
     -o tdm.jar
 
 ###
@@ -106,6 +104,7 @@ RUN curl -SL \
 ###
 
 COPY tdm.sh $HOME
+COPY log4j2.xml $HOME
 COPY entrypoint.sh /
 
 ###
