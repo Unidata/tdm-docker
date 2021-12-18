@@ -8,6 +8,7 @@ A containerized [TDM](http://www.unidata.ucar.edu/software/thredds/current/tds/r
 * `unidata/tdm-docker:4.6.11`
 * `unidata/tdm-docker:5.0-SNAPSHOT`
 * `unidata/tdm-docker:5.0`
+* `unidata/tdm-docker:5.2`
 
 ## Configuration
 ### docker-compose Parameterization
