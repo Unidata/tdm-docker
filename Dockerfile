@@ -23,7 +23,7 @@ RUN apt-get install -y curl
 # minus ca-certificates which we are inheriting from parent container and more
 # robust key verification.
 
-ENV GOSU_VERSION 1.12
+ENV GOSU_VERSION 1.14
 
 RUN set -eux; \
 # save list of currently installed packages for later so we can clean up
@@ -96,7 +96,7 @@ WORKDIR $HOME
 ###
 
 RUN curl -SL \
-    https://downloads.unidata.ucar.edu/tds/5.2/tdm-5.2.jar \
+    https://downloads.unidata.ucar.edu/tds/5.4/tdm-5.4-SNAPSHOT.jar \
     -o tdm.jar
 
 ###
