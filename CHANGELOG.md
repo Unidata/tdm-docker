@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.4 - 2023-03-27
+### Added
+- 5.4
+
 ## 5.2 - 2021-12-17
 ### Added
 - 5.2
