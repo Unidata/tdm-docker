@@ -4,11 +4,20 @@ A containerized [TDM](http://www.unidata.ucar.edu/software/thredds/current/tds/r
 
 ## Versions
 
-* `unidata/tdm-docker:latest`
-* `unidata/tdm-docker:4.6.11`
-* `unidata/tdm-docker:5.0-SNAPSHOT`
-* `unidata/tdm-docker:5.0`
+It is recommended to use the most recent `tdm-docker` image by explicitly
+specifying the desired tag (i.e. `unidata/tdm-docker:5.4` v.s.
+`unidata/tdm-docker:latest`), as this makes it simpler to debug potential
+issues.
+
+* `unidata/tdm-docker:latest` (Currently mirrors the 5.4 tag)
+* `unidata/tdm-docker:5.4`
+
+### Deprecated
+
 * `unidata/tdm-docker:5.2`
+* `unidata/tdm-docker:5.0`
+* `unidata/tdm-docker:5.0-SNAPSHOT`
+* `unidata/tdm-docker:4.6.11`
 
 ## Configuration
 ### docker-compose Parameterization

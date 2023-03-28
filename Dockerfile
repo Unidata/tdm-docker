@@ -96,7 +96,7 @@ WORKDIR $HOME
 ###
 
 RUN curl -SL \
-    https://downloads.unidata.ucar.edu/tds/5.4/tdm-5.4-SNAPSHOT.jar \
+    https://downloads.unidata.ucar.edu/tds/5.4/tdm-5.4.jar \
     -o tdm.jar
 
 ###
