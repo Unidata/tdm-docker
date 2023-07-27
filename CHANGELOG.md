@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - 4.6.11
 
-[Unreleased]: https://github.com/Unidata/tdm-docker/compare/v5.2...HEAD
+[Unreleased]: https://github.com/Unidata/tdm-docker/compare/v5.4...HEAD
+[5.4]: https://github.com/Unidata/tdm-docker/compare/v5.2...v5.4
 [5.2]: https://github.com/Unidata/tdm-docker/compare/v5.0...v5.2
 [5.0]: https://github.com/Unidata/tdm-docker/compare/v4.6.11...v5.0
