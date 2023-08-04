@@ -1,9 +1,5 @@
 version: '3'
 
-###
-# TDM
-###
-
 services:
   tdm:
     image: unidata/tdm-docker:5.4
@@ -11,6 +7,5 @@ services:
     volumes:
       - /path/to/your/thredds/directory:/usr/local/tomcat/content/thredds
       - /path/to/your/data/directory1:/path/to/your/data/directory1
-      - /path/to/your/tdm/logs:/usr/local/tomcat/content/tdm/logs
     env_file:
-      - "compose.env"
+      - "compose${THREDDS_COMPOSE_ENV_LOCAL}.env"
