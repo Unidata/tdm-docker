@@ -1,0 +1,251 @@
+#+options: ':nil *:t -:t ::t <:t H:4 \n:nil ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+options: auto-id:t
+
+#+title: readme
+#+date: <2023-08-01 Tue>
+#+author: Julien Chastang
+#+email: chastang@ucar.edu
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 28.2 (Org mode 9.6.7)
+
+#+PROPERTY: header-args :eval no :results none
+
+#+STARTUP: overview
+
+* Setup                                                            :noexport:
+  :PROPERTIES:
+  :CUSTOM_ID: h-F864C586
+  :END:
+
+#+BEGIN_SRC emacs-lisp :eval yes
+  (setq org-confirm-babel-evaluate nil)
+#+END_SRC
+
+Publishing
+
+#+BEGIN_SRC emacs-lisp :eval yes
+  (setq base-dir (concat (projectile-project-root) ".org"))
+
+  (setq pub-dir (projectile-project-root))
+
+  (setq org-publish-project-alist
+        `(("unidata-tdm-readme"
+            :base-directory ,base-dir
+            :recursive t
+            :base-extension "org"
+            :publishing-directory ,pub-dir
+            :publishing-function org-gfm-publish-to-gfm)))
+#+END_SRC
+
+
+* Unidata TDM Docker
+:PROPERTIES:
+:CUSTOM_ID: h-A4F8A5F1
+:END:
+
+Dockerized [[https://docs.unidata.ucar.edu/tds/current/userguide/tdm_ref.html][TDM]].
+
+** Introduction
+:PROPERTIES:
+:CUSTOM_ID: h-A4FB9801
+:END:
+
+This repository contains files necessary to build and run a TDM Docker container which runs in conjunction with the THREDDS Docker container to provide indexes for GRIB featureCollections. The container can run on a different VM from THREDDS provided it has access to the same data directory THREDDS has access to via an NFS mount, for example. The Unidata TDM Docker images associated with this repository are [[https://hub.docker.com/r/unidata/tdm-docker/][available on DockerHub]].
+
+** Versions
+   :PROPERTIES:
+   :CUSTOM_ID: h-59413645
+   :END:
+
+See tags listed [[https://hub.docker.com/r/unidata/tdm-docker/tags][on dockerhub]].
+
+** Prerequisites
+:PROPERTIES:
+:CUSTOM_ID: h-4192CCA6
+:END:
+
+Before you begin using this Docker container project, make sure your system has Docker installed. Docker Compose is optional but recommended.
+
+** Installation
+:PROPERTIES:
+:CUSTOM_ID: h-2F4E806F
+:END:
+
+You can either pull the image from DockerHub with:
+
+#+begin_src sh
+  docker pull unidata/tdm-docker:<version>
+#+end_src
+
+Or you can build it yourself with:
+
+  1. **Clone the repository**: ~git clone https://github.com/Unidata/tdm-docker.git~
+  2. **Navigate to the project directory**: ~cd tdm-docker~
+  3. **Build the Docker image**: ~docker build -t tdm-docker:<version> .~
+** Usage
+:PROPERTIES:
+:CUSTOM_ID: h-0612419E
+:END:
+*** Docker compose
+   :PROPERTIES:
+   :CUSTOM_ID: h-1C0CB7E8
+   :END:
+
+To run the TDM Docker container, beyond a basic Docker setup, we recommend installing [[https://docs.docker.com/compose/][docker-compose]]. ~docker-compose~ serves two purposes:
+
+1. Reduce headaches involving unwieldy ~docker~ command lines where you are running ~docker~ with multiple volume mounts and port forwards. In situations like these, ~docker~ commands become difficult to issue and read. Instead, the lengthy ~docker~ command is captured in a ~docker-compose.yml~ that is easy to read, maintain, and can be committed to version control.
+
+2. Coordinate the running of two or more containers. This can be useful for taking into account the same volume mountings, for example.
+
+However, ~docker-compose~ use is not mandatory. There is an example [[https://github.com/Unidata/tdm-docker/blob/master/docker-compose.yml][docker-compose.yml]] in this repository.
+
+**** Running the TDM
+    :PROPERTIES:
+    :CUSTOM_ID: h-46CFD2DE
+    :END:
+
+Once you have completed your setup you can run the container with:
+
+#+BEGIN_SRC sh
+  docker-compose up -d tdm
+#+END_SRC
+
+The output of such command should be something like:
+
+#+BEGIN_EXAMPLE
+  Creating tdm
+#+END_EXAMPLE
+
+**** Stopping the TDM
+    :PROPERTIES:
+    :CUSTOM_ID: h-365B4A9F
+    :END:
+
+To stop this container:
+
+#+BEGIN_SRC sh
+  docker-compose stop tdm
+#+END_SRC
+
+**** Delete TDM Container
+    :PROPERTIES:
+    :CUSTOM_ID: h-96B64C5E
+    :END:
+
+To clean the slate and remove the container (not the image, the container):
+
+#+BEGIN_SRC sh
+  docker-compose rm -f tdm
+#+END_SRC
+
+*** Upgrading
+    :PROPERTIES:
+    :CUSTOM_ID: h-73D8E285
+    :END:
+
+Upgrading to a newer version of the container is easy. Simply stop the container via ~docker~ or ~docker-compose~, followed by
+
+#+BEGIN_SRC sh
+  docker pull unidata/tdm-docker:<version>
+#+END_SRC
+
+and restart the container.  Refer to the new version from the command line or in the ~docker-compose.yml~.
+
+*** Check What is Running
+   :PROPERTIES:
+   :CUSTOM_ID: h-E74AFAFF
+   :END:
+
+**** docker ps
+    :PROPERTIES:
+    :CUSTOM_ID: h-E81E27D2
+    :END:
+
+#+BEGIN_SRC sh
+  docker ps
+#+END_SRC
+
+which should give you output that looks something like this:
+
+#+BEGIN_EXAMPLE
+CONTAINER ID   IMAGE                       COMMAND                  CREATED        STATUS       PORTS                                   NAMES
+d4a1424d9375   unidata/tdm-docker:4.5   "/entrypoint.sh tdm.…"   5 weeks ago    Up 5 weeks                                           tdm
+#+END_EXAMPLE
+
+** Configuration
+:PROPERTIES:
+:CUSTOM_ID: h-BA871A11
+:END:
+*** Docker Compose
+:PROPERTIES:
+:CUSTOM_ID: h-9BD50914
+:END:
+
+To run the TDM Docker container, beyond a basic Docker setup, we recommend installing [[https://docs.docker.com/compose/][docker-compose]]. We will assume you have knowledge on how to [[https://docs.unidata.ucar.edu/tds/current/userguide/basic_config_catalog.html][configure a TDS]].
+
+#+INCLUDE: "../docker-compose.yml" src yaml
+
+In the ~docker-compose.yml~ file, ~volumes~ mapping section, you will point the TDM to the [[https://github.com/Unidata/thredds-docker#thredds][TDS content root directory]] and the =/data= directory corresponding to the ~DataRoots~ element in ~threddsConfig.xml~. E.g.,
+
+#+begin_src yaml
+  volumes:
+      # data directory
+      - /data/:/data/
+      #  TDS content root directory
+      - ~/tdsconfig/:/usr/local/tomcat/content/thredds/
+      - /logs/tdm/:/usr/local/tomcat/content/tdm/logs
+#+end_src
+
+Also note the =/data= directory will be the same directory the TDS container will be pointing to.
+
+Because you will most likely run this container in conjunction with the ~thredds-docker~ container, see the ~thredds-docker~ project [[https://github.com/Unidata/thredds-docker][README]] for additional parameterization via the ~compose.env~ file. Pay special attention to the ~TDS_HOST~ environment variable which will tell the TDM where the TDS lives so that it can communicate with it. See the section below on [[#h-7A6A748D][coordinating with the TDS]].
+
+*** Configurable TDM UID and GID
+:PROPERTIES:
+:CUSTOM_ID: h-1CB62389
+:END:
+
+[[https://github.com/Unidata/tomcat-docker#configurable-tomcat-uid-and-gid][See parent unidata/tomcat container]].
+
+Set the UID/GID of the TDM user via the ~compose.env~ file. If not set, the default UID/GID is ~1000/1000~.
+
+*** TDM Password and Coordination with the TDS
+:PROPERTIES:
+:CUSTOM_ID: h-7A6A748D
+:END:
+
+The TDM will notify the TDS of data changes via an HTTPS port ~8443~ triggering mechanism. It is important the TDM password (~TDM_PW~ environment variable) defined in the [[https://github.com/Unidata/thredds-docker/blob/master/docker-compose.yml][docker-compose.yml]] file corresponds to the SHA *digested* password in the [[https://github.com/Unidata/thredds-docker/blob/master/files/tomcat-users.xml][tomcat-users.xml]] file. [[https://hub.docker.com/r/unidata/tomcat-docker/][See the parent Tomcat container]] for how to create a SHA digested password. Also, because this mechanism works via port ~8443~, you will have to get your HTTPS certificates in place. Again [[https://hub.docker.com/r/unidata/tomcat-docker/][see the parent Tomcat container]] on how to install certificates, self-signed or otherwise.
+
+Not having the Tomcat ~tdm~ user password and digested password in sync can be a big source of frustration. One way to diagnose this problem is to look at the TDM logs and ~grep~ for ~trigger~. You will find something like:
+
+#+begin_src sh
+fc.NAM-CONUS_80km.log:2016-11-02T16:09:54.305 +0000 WARN  - FAIL send trigger to https://tds.scigw.unidata.ucar.edu/thredds/admin/collection/trigger?trigger=never&collection=NAM-CONUS_80km status = 401
+#+end_src
+
+Enter the trigger URL in your browser:
+
+#+begin_src sh
+https://tds.scigw.unidata.ucar.edu/thredds/admin/collection/trigger?trigger=never&collection=NAM-CONUS_80km
+#+end_src
+
+At this point the browser will prompt you for a ~tdm~ login and password you defined in the ~docker-compose.yml~. If the triggering mechanism is successful, you see a ~TRIGGER SENT~ message. Otherwise, make sure your HTTPS certificate is present, and ensure the ~tdm~ password in the ~docker-compose.yml~, and digested password in the ~tomcat-users.xml~ are in sync.
+** Citation
+   :PROPERTIES:
+   :CUSTOM_ID: h-0BAA13E6
+   :END:
+
+In order to cite this project, please simply make use of the Unidata THREDDS Data Server DOI: doi:10.5065/D6N014KG https://doi.org/10.5065/D6N014KG
+
+** Support
+   :PROPERTIES:
+   :CUSTOM_ID: h-7D1176D3
+   :END:
+
+If you have a question or would like support for this TDM Docker container, consider [[https://github.com/Unidata/tdm-docker/issues][submitting a GitHub issue]]. Alternatively, you may wish to start a discussion on the THREDDS Community mailing list: [[mailto:thredds@unidata.ucar.edu][thredds@unidata.ucar.edu]].
+
+For general TDS questions, please see the [[https://www.unidata.ucar.edu/software/tds/#help][THREDDS support page]].
