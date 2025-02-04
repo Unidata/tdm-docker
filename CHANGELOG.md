@@ -4,11 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 5.6 - 2025-02-04
+## 5.6 - 2025-02-06
 ### Added
 - 5.6
 ### Changed
 - New ENV syntax in Dockerfile
+- eclipse-temurin:17-jdk
 ## 5.5 - 2024-07-29
 ### Added
 - 5.5
