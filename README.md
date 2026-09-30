@@ -38,7 +38,7 @@ This repository contains files necessary to build and run a TDM Docker container
 
 ## Versions
 
-See tags listed [on dockerhub](https://hub.docker.com/r/unidata/tdm-docker/tags).
+See tags listed [on DockerHub](https://hub.docker.com/r/unidata/tdm-docker/tags).
 
 
 <a id="h-4192CCA6"></a>
@@ -95,9 +95,7 @@ docker-compose up -d tdm
 
 The output of such command should be something like:
 
-```
-Creating tdm
-```
+    Creating tdm
 
 
 <a id="h-365B4A9F"></a>
@@ -150,10 +148,8 @@ docker ps
 
 which should give you output that looks something like this:
 
-```
-CONTAINER ID   IMAGE                       COMMAND                  CREATED        STATUS       PORTS                                   NAMES
-d4a1424d9375   unidata/tdm-docker:4.5   "/entrypoint.sh tdm.…"   5 weeks ago    Up 5 weeks                                           tdm
-```
+    CONTAINER ID   IMAGE                       COMMAND                  CREATED        STATUS       PORTS                                   NAMES
+    d4a1424d9375   unidata/tdm-docker:5.10   "/entrypoint.sh tdm.…"   5 weeks ago    Up 5 weeks                                           tdm
 
 
 <a id="h-BA871A11"></a>
@@ -172,7 +168,7 @@ version: '3'
 
 services:
   tdm:
-    image: unidata/tdm-docker:5.4
+    image: unidata/tdm-docker:5.10-SNAPSHOT
     container_name: tdm
     volumes:
       - /path/to/your/thredds/directory:/usr/local/tomcat/content/thredds
@@ -196,15 +192,15 @@ Also note the `/data` directory will be the same directory the TDS container wil
 
 The container is configured with these environment variables:
 
-| Setting | Environment variable | Example/default |
-|---|---|---|
-| TDS content root | `TDS_CONTENT_ROOT_PATH` | `/usr/local/tomcat/content` |
-| TDS trigger password | `TDM_PW` | No default; required |
-| TDS base URL | `TDS_HOST` | `https://tds.example.test/` |
-| Maximum Java heap | `TDM_XMX_SIZE` | `6G` |
-| Minimum Java heap | `TDM_XMS_SIZE` | `1G` |
-| Runtime user ID | `TDM_USER_ID` | `1000` |
-| Runtime group ID | `TDM_GROUP_ID` | `1000` |
+| Setting              | Environment variable                                | Example/default             |
+|-------------------- |--------------------------------------------------- |--------------------------- |
+| TDS content root     | TDS<sub>CONTENT</sub><sub>ROOT</sub><sub>PATH</sub> | /usr/local/tomcat/content   |
+| TDS trigger password | TDM<sub>PW</sub>                                    | No default; required        |
+| TDS base URL         | TDS<sub>HOST</sub>                                  | <https://tds.example.test/> |
+| Maximum Java heap    | TDM<sub>XMX</sub><sub>SIZE</sub>                    | 6G                          |
+| Minimum Java heap    | TDM<sub>XMS</sub><sub>SIZE</sub>                    | 1G                          |
+| Runtime user ID      | TDM<sub>USER</sub><sub>ID</sub>                     | 1000                        |
+| Runtime group ID     | TDM<sub>GROUP</sub><sub>ID</sub>                    | 1000                        |
 
 Do not put a real password in the tracked `compose.env` template. Copy it to the ignored `compose.local.env`, set `TDM_PW` there, and select it when starting Compose:
 
@@ -257,11 +253,11 @@ fc.example.log:2026-01-01T00:00:00.000 +0000 WARN - FAIL send trigger to https:/
 
 Use the reported status to narrow down the cause:
 
-| Symptom | Likely area |
-|---|---|
-| HTTP `401` | The `tdm` password does not match the password used to generate the TDS digest. |
-| HTTP `403` | The `tdm` user is authenticated but is missing the `tdsTrigger` role. |
-| Connection or TLS failure | Check `TDS_HOST`, DNS and network routing, and certificate trust. |
+| Symptom                   | Likely area                                                                     |
+|------------------------- |------------------------------------------------------------------------------- |
+| HTTP `401`                | The `tdm` password does not match the password used to generate the TDS digest. |
+| HTTP `403`                | The `tdm` user is authenticated but is missing the `tdsTrigger` role.           |
+| Connection or TLS failure | Check `TDS_HOST`, DNS and network routing, and certificate trust.               |
 
 
 <a id="h-0BAA13E6"></a>
