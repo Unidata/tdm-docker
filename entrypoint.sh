@@ -1,35 +1,27 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-if [ "$1" = 'tdm.sh' ]; then
+if [ "${1:-}" = 'tdm.sh' ]; then
 
     USER_ID=${TDM_USER_ID:-1000}
     GROUP_ID=${TDM_GROUP_ID:-1000}
 
-    ###
-    # Tomcat user
-    ###
-    if ! getent group $GROUP_ID &> /dev/null; then
-      groupadd -r tomcat -g $GROUP_ID
+    if ! [[ "$USER_ID" =~ ^[0-9]+$ && "$GROUP_ID" =~ ^[0-9]+$ ]]; then
+        echo "TDM_USER_ID and TDM_GROUP_ID must be numeric" >&2
+        exit 1
     fi
-    # create user for USER_ID if one doesn't already exist
-    if ! getent passwd $USER_ID &> /dev/null; then
-      useradd -u $USER_ID -g $GROUP_ID tomcat
+
+    if ! getent group "$GROUP_ID" > /dev/null; then
+        groupadd --system --gid "$GROUP_ID" tdm
     fi
-    # alter USER_ID with nologin shell and CATALINA_HOME home directory
-    usermod -d "${CATALINA_HOME}" -s /sbin/nologin $(id -u -n $USER_ID)
-    groupadd -r tomcat -g ${GROUP_ID} && \
-    useradd -u ${USER_ID} -g tomcat -d ${CATALINA_HOME} -s /sbin/nologin \
-        -c "Tomcat user" tomcat
+    if ! getent passwd "$USER_ID" > /dev/null; then
+        useradd --uid "$USER_ID" --gid "$GROUP_ID" \
+            --home-dir "$TDM_HOME" --shell /usr/sbin/nologin \
+            --comment "TDM user" tdm
+    fi
 
-    ###
-    # Change CATALINA_HOME ownership to tomcat user and tomcat group
-    # Restrict permissions on conf
-    ###
-
-    chown -R $USER_ID:$GROUP_ID ${TDM_HOME}
-    sync
-    exec gosu $USER_ID "$@"
+    chown -R "$USER_ID:$GROUP_ID" "$TDM_HOME/logs" "$TDM_HOME/.java"
+    exec gosu "$USER_ID:$GROUP_ID" "$@"
 fi
 
 exec "$@"
