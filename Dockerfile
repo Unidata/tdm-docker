@@ -17,8 +17,10 @@ RUN apt-get update && \
     # Cleanup
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p $TDM_HOME/logs && \
-    curl -SL https://downloads.unidata.ucar.edu/tds/5.10/tdm-5.10-SNAPSHOT.jar -o tdm.jar
+    mkdir -p "$TDM_HOME/logs" "$TDM_HOME/.java" && \
+    curl -fSL \
+        https://downloads.unidata.ucar.edu/tds/5.10/tdm-5.10-SNAPSHOT.jar \
+        -o tdm.jar
 
 COPY tdm.sh $HOME
 COPY log4j2.xml $HOME

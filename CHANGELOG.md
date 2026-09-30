@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## 5.10-SNAPSHOT - Unreleased
 ### Added
 - 5.10-SNAPSHOT
+- Documented least-privilege TDS authentication for the TDM.
+### Changed
+- Removed the default TDM password and fail fast when required configuration is missing.
+- Corrected runtime UID/GID creation before dropping root privileges.
+- Limited runtime ownership to logs and Java preferences; application files remain root-owned.
+- Made TDM artifact downloads fail on HTTP errors.
 
 ## 5.9 - 2026-07-13
 ### Added

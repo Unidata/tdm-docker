@@ -176,7 +176,7 @@ services:
     container_name: tdm
     volumes:
       - /path/to/your/thredds/directory:/usr/local/tomcat/content/thredds
-      - /path/to/your/data/directory1:/path/to/your/data/directory1
+      - /path/to/your/data/directory1:/path/to/your/data/directory1:ro
     env_file:
       - "compose${THREDDS_COMPOSE_ENV_LOCAL}.env"
 ```
@@ -194,37 +194,74 @@ volumes:
 
 Also note the `/data` directory will be the same directory the TDS container will be pointing to.
 
-Because you will most likely run this container in conjunction with the `thredds-docker` container, see the `thredds-docker` project [README](https://github.com/Unidata/thredds-docker) for additional parameterization via the `compose.env` file. Pay special attention to the `TDS_HOST` environment variable which will tell the TDM where the TDS lives so that it can communicate with it. See the section below on [coordinating with the TDS](#h-7A6A748D).
+The container is configured with these environment variables:
+
+| Setting | Environment variable | Example/default |
+|---|---|---|
+| TDS content root | `TDS_CONTENT_ROOT_PATH` | `/usr/local/tomcat/content` |
+| TDS trigger password | `TDM_PW` | No default; required |
+| TDS base URL | `TDS_HOST` | `https://tds.example.test/` |
+| Maximum Java heap | `TDM_XMX_SIZE` | `6G` |
+| Minimum Java heap | `TDM_XMS_SIZE` | `1G` |
+| Runtime user ID | `TDM_USER_ID` | `1000` |
+| Runtime group ID | `TDM_GROUP_ID` | `1000` |
+
+Do not put a real password in the tracked `compose.env` template. Copy it to the ignored `compose.local.env`, set `TDM_PW` there, and select it when starting Compose:
+
+```sh
+cp compose.env compose.local.env
+chmod 600 compose.local.env
+THREDDS_COMPOSE_ENV_LOCAL=.local docker compose up -d tdm
+```
+
+The `env_file` entry in `docker-compose.yml` expands this variable as `compose${THREDDS_COMPOSE_ENV_LOCAL}.env`; setting it to `.local` therefore selects `compose.local.env`. Leaving it unset selects the tracked `compose.env` template.
+
+The TDM receives this password through its environment and passes it to the Java process as a command-line argument. Limit access to the Docker host and its process/container metadata accordingly.
 
 
 <a id="h-1CB62389"></a>
 
 ### Configurable TDM UID and GID
 
-[See parent unidata/tomcat container](https://github.com/Unidata/tomcat-docker#configurable-tomcat-uid-and-gid).
+The TDM process runs under the numeric UID/GID specified by `TDM_USER_ID` and `TDM_GROUP_ID`, which default to `1000/1000`. At startup, the container creates `tdm` user or group entries only when those numeric IDs do not already exist. If the IDs already belong to named identities in the image, those identities are used without modification.
 
-Set the UID/GID of the TDM user via the `compose.env` file. If not set, the default UID/GID is `1000/1000`.
+Only the TDM log and Java Preferences directories are made writable by the runtime UID/GID. The JAR, scripts, and logging configuration remain root-owned.
 
 
 <a id="h-7A6A748D"></a>
 
 ### TDM Password and Coordination with the TDS
 
-The TDM will notify the TDS of data changes via an HTTPS port `8443` triggering mechanism. It is important the TDM password (`TDM_PW` environment variable) defined in the [docker-compose.yml](https://github.com/Unidata/thredds-docker/blob/master/docker-compose.yml) file corresponds to the SHA **digested** password in the [tomcat-users.xml](https://github.com/Unidata/thredds-docker/blob/master/files/tomcat-users.xml) file. [See the parent Tomcat container](https://hub.docker.com/r/unidata/tomcat-docker/) for how to create a SHA digested password. Also, because this mechanism works via port `8443`, you will have to get your HTTPS certificates in place. Again [see the parent Tomcat container](https://hub.docker.com/r/unidata/tomcat-docker/) on how to install certificates, self-signed or otherwise.
+The TDM notifies the TDS through its protected collection-trigger endpoint. Create a Tomcat user named `tdm` with only the `tdsTrigger` role. The username is currently fixed by `tdm.sh`.
 
-Not having the Tomcat `tdm` user password and digested password in sync can be a big source of frustration. One way to diagnose this problem is to look at the TDM logs and `grep` for `trigger`. You will find something like:
+For example, add the following role and user to the `tomcat-users.xml` mounted by the TDS container:
 
-```sh
-fc.NAM-CONUS_80km.log:2016-11-02T16:09:54.305 +0000 WARN  - FAIL send trigger to https://tds.scigw.unidata.ucar.edu/thredds/admin/collection/trigger?trigger=never&collection=NAM-CONUS_80km status = 401
+```xml
+<tomcat-users>
+  <role rolename="tdsTrigger"/>
+  <user username="tdm"
+        password="DIGESTED_PASSWORD"
+        roles="tdsTrigger"/>
+</tomcat-users>
 ```
 
-Enter the trigger URL in your browser:
+Generate `DIGESTED_PASSWORD` using the SHA-512 procedure in the [Tomcat Docker documentation](https://github.com/Unidata/tomcat-docker#digested-passwords). Set `TDM_PW` to the original cleartext password used to produce that digest, not to the digest itself. Mount `tomcat-users.xml` read-only in the TDS container and restart the TDS after changing it.
+
+Set the `TDS_HOST` to the TDS base HTTPS URL reachable from the TDM container.
+
+If authentication fails, search the TDM logs for `trigger`. A failure resembles:
 
 ```sh
-https://tds.scigw.unidata.ucar.edu/thredds/admin/collection/trigger?trigger=never&collection=NAM-CONUS_80km
+fc.example.log:2026-01-01T00:00:00.000 +0000 WARN - FAIL send trigger to https://tds.example.test/thredds/admin/collection/trigger?trigger=never&collection=example status = 401
 ```
 
-At this point the browser will prompt you for a `tdm` login and password you defined in the `docker-compose.yml`. If the triggering mechanism is successful, you see a `TRIGGER SENT` message. Otherwise, make sure your HTTPS certificate is present, and ensure the `tdm` password in the `docker-compose.yml`, and digested password in the `tomcat-users.xml` are in sync.
+Use the reported status to narrow down the cause:
+
+| Symptom | Likely area |
+|---|---|
+| HTTP `401` | The `tdm` password does not match the password used to generate the TDS digest. |
+| HTTP `403` | The `tdm` user is authenticated but is missing the `tdsTrigger` role. |
+| Connection or TLS failure | Check `TDS_HOST`, DNS and network routing, and certificate trust. |
 
 
 <a id="h-0BAA13E6"></a>
