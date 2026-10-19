@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 5.10-SNAPSHOT - Unreleased
+## 5.10 - 2026-10-19
 ### Added
-- 5.10-SNAPSHOT
+- 5.10
 - Documented least-privilege TDS authentication for the TDM.
 ### Changed
 - Removed the default TDM password and fail fast when required configuration is missing.
