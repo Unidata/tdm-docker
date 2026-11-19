@@ -19,7 +19,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p "$TDM_HOME/logs" "$TDM_HOME/.java" && \
     curl -fSL \
-        https://downloads.unidata.ucar.edu/tds/5.10/tdm-5.10.jar \
+        https://downloads.unidata.ucar.edu/tds/5.11/tdm-5.11.jar \
         -o tdm.jar
 
 COPY tdm.sh $HOME
